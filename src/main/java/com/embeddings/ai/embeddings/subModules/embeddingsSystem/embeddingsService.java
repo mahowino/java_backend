@@ -1,6 +1,7 @@
 package com.embeddings.ai.embeddings.subModules.embeddingsSystem;
 
 
+import com.embeddings.ai.embeddings.entity.GPTResponse;
 import com.embeddings.ai.embeddings.entity.PDFChunks;
 import com.embeddings.ai.embeddings.entity.TextEmbeddingData;
 import com.embeddings.ai.embeddings.entity.VectorData;
@@ -63,6 +64,9 @@ public class embeddingsService {
                             .build();
 
             System.out.println( vectorData );
+
+
+
             dataVect.add(vectorData);
         }
 
@@ -78,7 +82,7 @@ public class embeddingsService {
         String apiUrl="https://api.openai.com/v1/embeddings";
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add((request, body, execution) -> {
-            request.getHeaders().add("Authorization", "Bearer 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");
+            request.getHeaders().add("Authorization", "Bearer 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");
             return execution.execute(request, body);
         });
 
@@ -140,14 +144,35 @@ public class embeddingsService {
                     System.out.println("Files in directory: " + directoryPath);
 
                     // Iterate through the list of files and print their names
-                    int x=0;
+
                     for (File file : files) {
-                        if (x>=1) break;
+
                         if (file.isFile()) {
                             vectorData.addAll(displayParagraphs(file.getName()));
-                            x++;
                         }
+                        //send api request to backend
+
                     }
+
+
+
+                    // Chunk size
+                    int chunkSize = 100;
+
+                    // Split the dataList into chunks
+                    List<List<VectorData>> chunks = new ArrayList<>();
+                    for (int i = 0; i < vectorData.size(); i += chunkSize) {
+                        int end = Math.min(i + chunkSize, vectorData.size());
+                        chunks.add(vectorData.subList(i, end));
+                    }
+
+                    for (List<VectorData> chunk:chunks){
+                        String apiUrl="http://192.168.100.4:5000/store_embedding";
+                        RestTemplate restTemplate = new RestTemplate();
+
+                        restTemplate.postForObject(apiUrl, chunk, GPTResponse.class);
+                    }
+
                     System.out.println("I am done");
                 } else {
                     System.err.println("Error: Unable to list files in the directory.");

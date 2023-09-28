@@ -14,7 +14,7 @@ public class embeddingsController {
  embeddingsService service=new embeddingsService();
 
  @GetMapping("/")
-    public List<VectorData> getEmbeddings(){
-        return service.getEmbeddingsFromText();
+    public void getEmbeddings(){
+         service.getEmbeddingsFromText();
     }
 }
