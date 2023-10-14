@@ -71,6 +71,7 @@ public class embeddingsService {
         }
 
         return dataVect;
+
     }
 
     private static TextEmbeddingData getEmbeddingsFromOpenAI(String chunk) {
@@ -82,7 +83,7 @@ public class embeddingsService {
         String apiUrl="https://api.openai.com/v1/embeddings";
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add((request, body, execution) -> {
-            request.getHeaders().add("Authorization", "Bearer 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");
+            request.getHeaders().add("Authorization", "Bearer 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");
             return execution.execute(request, body);
         });
 
@@ -152,6 +153,7 @@ public class embeddingsService {
                         }
                         //send api request to backend
 
+
                     }
 
 
@@ -167,7 +169,7 @@ public class embeddingsService {
                     }
 
                     for (List<VectorData> chunk:chunks){
-                        String apiUrl="http://192.168.100.4:5000/store_embedding";
+                        String apiUrl="http://192.168.100.18:5000/store_embedding";
                         RestTemplate restTemplate = new RestTemplate();
 
                         restTemplate.postForObject(apiUrl, chunk, GPTResponse.class);
